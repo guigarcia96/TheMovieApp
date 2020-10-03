@@ -1,13 +1,16 @@
 package com.example.themovie.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,9 +20,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.themovie.R;
 import com.example.themovie.model.ApiInfo;
+import com.example.themovie.model.MovieDetails;
+import com.example.themovie.model.Movies;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -30,7 +37,9 @@ public class DetailsMovieActivity extends AppCompatActivity {
     private TextView txt_details_title, txt_details_description, txt_details_average;
     private ImageView imgDetails;
     private RequestQueue requestQueue;
-    private String id;
+    private int id;
+    private ConstraintLayout errorLayout;
+    private Button errorButton;
     private ProgressBar progressBar;
 
 
@@ -40,16 +49,33 @@ public class DetailsMovieActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details_movie);
 
         Intent intent = getIntent();
-        id = intent.getStringExtra("id_movie");
+        id = intent.getIntExtra("id_movie", 0);
 
         setViews();
 
         progressBar.setVisibility(View.VISIBLE);
 
+        errorLayout.setVisibility(View.INVISIBLE);
+
         //seta para voltar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getMovieDetails(id);
+
+    }
+
+    private void setErrorPage() {
+
+        setContentView(R.layout.error_layout);
+        errorButton = findViewById(R.id.btn_error);
+
+        errorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
 
     }
 
@@ -59,6 +85,8 @@ public class DetailsMovieActivity extends AppCompatActivity {
         txt_details_average = findViewById(R.id.txt_details_average);
         imgDetails = findViewById(R.id.img_details);
         progressBar = findViewById(R.id.progressbar_details);
+        errorLayout = findViewById(R.id.error_layout);
+
     }
 
     @Override
@@ -77,54 +105,61 @@ public class DetailsMovieActivity extends AppCompatActivity {
     }
 
 
-    private void getMovieDetails(String id) {
-        requestQueue = Volley.newRequestQueue(this);
-
+    private void getMovieDetails(int id) {
         final String URL = ApiInfo.URL_BASE+"/movie/" + id + "?api_key="+ ApiInfo.API_KEY+"&language="+ ApiInfo.LANGUAGE;
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    displayData(response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                   error.printStackTrace();
-                }
-            });
-            requestQueue.add(jsonObjectRequest);
+        requestQueue = Volley.newRequestQueue(this);
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Gson gson = new Gson();
+                MovieDetails movieDetails = gson.fromJson(response, MovieDetails.class);
+                displayData(movieDetails);
+                progressBar.setVisibility(View.GONE);
+
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                setErrorPage();
+            }
+        });
+
+        requestQueue.add(stringRequest);
+
 
     }
-    private void setActionBarTitle(JSONObject response) throws JSONException {
+    private void setActionBarTitle(String title)  {
 
-        getSupportActionBar().setTitle(response.getString("title"));
+        getSupportActionBar().setTitle(title);
     }
 
 
-    private void displayData(JSONObject response) {
+    private void displayData(MovieDetails movieDetails) {
 
-        try {
+            txt_details_title.setText(movieDetails.getTitle());
 
-            txt_details_title.setText(response.getString("title"));
-
-            if(response.getString("overview").equals("")) {
+            if(movieDetails.getOverview().equals("")) {
                 txt_details_description.setText("Nenhuma Descrição disponivel");
             } else {
-                txt_details_description.setText(response.getString("overview"));
+                txt_details_description.setText(movieDetails.getOverview());
             }
 
-            txt_details_average.setText(response.getString("vote_average").toString());
-            Picasso.get().load("https://image.tmdb.org/t/p/w500/"+response.getString("poster_path")).into(imgDetails);
+            txt_details_average.setText(Double.toString(movieDetails.getAverage()));
+            Picasso.get().load("https://image.tmdb.org/t/p/w500/"+movieDetails.getImageURL()).into(imgDetails);
 
             txt_details_description.setMovementMethod(new ScrollingMovementMethod());
 
             progressBar.setVisibility(View.GONE);
-            setActionBarTitle(response);
+            setActionBarTitle(movieDetails.getTitle());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
     }
 

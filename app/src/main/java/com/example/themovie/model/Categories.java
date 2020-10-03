@@ -1,32 +1,25 @@
 package com.example.themovie.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+
 public class Categories {
 
-    private String categories, id;
+    @SerializedName("genres")
+    private ArrayList<Category> categories;
 
 
-    public Categories(){}
 
-    public Categories(String categories, String id) {
+    public Categories(ArrayList<Category> categories) {
         this.categories = categories;
-        this.id = id;
-
     }
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCategories() {
+    public ArrayList<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(String categories) {
+    public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
 }

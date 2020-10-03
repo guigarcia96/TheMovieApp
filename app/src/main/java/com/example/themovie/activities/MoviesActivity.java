@@ -1,26 +1,34 @@
 package com.example.themovie.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.themovie.R;
 import com.example.themovie.adapters.MoviesAdapter;
 import com.example.themovie.model.ApiInfo;
+import com.example.themovie.model.Categories;
+import com.example.themovie.model.Movie;
 import com.example.themovie.model.Movies;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,12 +41,15 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
     private RecyclerView recyclerView;
     private MoviesAdapter moviesAdapter;
-    private List<Movies> listMovies;
+    private List<Movie> listMovies;
     private ProgressBar progressBar;
     private int initialPage = 1;
     private int finalPage;
     private RequestQueue requestQueue;
-    private String id;
+    private ConstraintLayout errorLayout;
+    private int id;
+    private Button errorButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +60,27 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
         listMovies = new ArrayList<>();
 
-        progressBar = findViewById(R.id.progressBar_movies);
+        setViews();
+
         progressBar.setVisibility(View.VISIBLE);
 
-        recyclerView = findViewById(R.id.rcy_movies);
         recyclerView.setVisibility(View.GONE);
 
+        errorLayout.setVisibility(View.INVISIBLE);
+
         Intent intent = getIntent();
-        id = intent.getStringExtra("id");
+        id = intent.getIntExtra("id", 0);
 
         getMovies(id);
         displayRecyclerView();
         updateRecyclerView();
 
+    }
+
+    private void setViews() {
+        progressBar = findViewById(R.id.progressBar_movies);
+        recyclerView = findViewById(R.id.rcy_movies);
+        errorLayout = findViewById(R.id.error_layout);
     }
 
     private void displayRecyclerView() {
@@ -73,50 +92,50 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void getMovies(String id) {
+    private void getMovies(int id) {
         requestQueue = Volley.newRequestQueue(this);
 
-        String  URL= ApiInfo.URL_BASE+"/discover/movie?api_key="+ ApiInfo.API_KEY+"&with_genres="+id+"&language="+ ApiInfo.LANGUAGE+"="+initialPage;
+        final String  URL= ApiInfo.URL_BASE+"/discover/movie?api_key="+ ApiInfo.API_KEY+"&with_genres="+id+"&language="+ ApiInfo.LANGUAGE+"&page="+initialPage;
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
 
-
-                try {
-                    finalPage = response.getInt("total_pages");
-                       JSONArray jsonArray = response.getJSONArray("results");
-                       for(int i = 0; i <jsonArray.length(); i++) {
-
-                           JSONObject movie = jsonArray.getJSONObject(i);
-                           Movies movies = new Movies();
-                           movies.setMovie(movie.getString("title"));
-                           movies.setImageURL("https://image.tmdb.org/t/p/w500/"+movie.getString("poster_path"));
-                           movies.setId(movie.getString("id"));
-
-                           listMovies.add(movies);
-
-                       }
-
-                   }
-                   catch (JSONException e) {
-                       e.printStackTrace();
-                   }
-
+                Gson gson = new Gson();
+                Movies movies = gson.fromJson(response, Movies.class);
+                listMovies.addAll(movies.getMovies());
+                Log.d("TAG",URL);
+                finalPage = movies.getFinalPage();
                 progressBar.setVisibility(View.GONE);
                 moviesAdapter.notifyDataSetChanged();
 
-            }
 
+
+            }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                setErrorPage();
+
             }
         });
 
+        requestQueue.add(stringRequest);
 
-        requestQueue.add(request);
+    }
+    private void setErrorPage() {
+
+        setContentView(R.layout.error_layout);
+        errorButton = findViewById(R.id.btn_error);
+
+        errorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
 
     }
     private void setActionBarTitle() {

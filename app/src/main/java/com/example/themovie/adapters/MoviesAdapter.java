@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themovie.R;
-import com.example.themovie.model.Movies;
+import com.example.themovie.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
     private LayoutInflater layoutInflater;
-    private List<Movies> movies;
+    private List<Movie> movies;
     private OnMoviesListener onMoviesListener;
 
-    public MoviesAdapter(Context context, List<Movies> movies, OnMoviesListener onMoviesListener) {
+    public MoviesAdapter(Context context, List<Movie> movies, OnMoviesListener onMoviesListener) {
         this.layoutInflater = LayoutInflater.from(context);
         this.movies = movies;
         this.onMoviesListener = onMoviesListener;
@@ -41,7 +41,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.textMovieTitle.setText(movies.get(position).getMovie());
-        Picasso.get().load(movies.get(position).getImageURL()).into(holder.imgMovies);
+        Picasso.get().load("https://image.tmdb.org/t/p/w500"+movies.get(position).getImageURL()).into(holder.imgMovies);
 
     }
 

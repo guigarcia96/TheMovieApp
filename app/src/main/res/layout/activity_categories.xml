@@ -7,6 +7,8 @@
     android:background="@android:color/black"
     tools:context=".activities.CategoriesActivity">
 
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcy_categories"
         android:layout_width="409dp"
@@ -21,4 +23,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <include layout="@layout/error_layout" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

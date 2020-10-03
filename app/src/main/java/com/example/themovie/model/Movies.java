@@ -1,38 +1,35 @@
 package com.example.themovie.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+
 public class Movies {
 
-    private String movie, id, imageURL;
+    @SerializedName("results")
+    private ArrayList<Movie> movies;
 
-    public Movies() {}
+    @SerializedName("total_pages")
+    private int finalPage;
 
-    public Movies(String movie, String id, String imageURL) {
-        this.movie = movie;
-        this.id = id;
-        this.imageURL = imageURL;
+    public Movies(ArrayList<Movie> movies, int finalPage) {
+        this.movies = movies;
+        this.finalPage = finalPage;
     }
 
-    public String getMovie() {
-        return movie;
+    public ArrayList<Movie> getMovies() {
+        return movies;
     }
 
-    public void setMovie(String movie) {
-        this.movie = movie;
+    public void setMovies(ArrayList<Movie> movies) {
+        this.movies = movies;
     }
 
-    public String getId() {
-        return id;
+    public int getFinalPage() {
+        return finalPage;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setFinalPage(int finalPage) {
+        this.finalPage = finalPage;
     }
 }
