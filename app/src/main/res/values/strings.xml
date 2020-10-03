@@ -6,8 +6,6 @@
     <string name="titulo">Titulo</string>
     <string name="descricao">Descrição</string>
     <string name="nota">Nota</string>
-    <string name="api_key">6dac0fd5c85431d1c5643511b0f35c71</string>
-    <string name="language">pt-BR</string>
-    <string name="url_base">https://api.themoviedb.org/3</string>
+
 
 </resources>

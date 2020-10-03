@@ -15,7 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.themovie.R;
 import com.example.themovie.adapters.CategoriesAdapter;
-import com.example.themovie.model.Api_Info;
+import com.example.themovie.model.ApiInfo;
 import com.example.themovie.model.Categories;
 
 import org.json.JSONArray;
@@ -31,8 +31,7 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
         private CategoriesAdapter categoriesAdapter;
         private List<Categories> listCategories;
         private RequestQueue requestQueue;
-        private Api_Info api_info = new Api_Info();
-        private String URL = api_info.URL_BASE+"/genre/movie/list?api_key="+api_info.API_KEY+"&language="+api_info.LANGUAGE;
+        private String URL = ApiInfo.URL_BASE+"/genre/movie/list?api_key="+ ApiInfo.API_KEY+"&language="+ ApiInfo.LANGUAGE;
 
 
 
@@ -45,22 +44,8 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
         recyclerView = findViewById(R.id.rcy_categories);
         listCategories = new ArrayList<>();
 
-
-
-
-        jsonParse();
+        getCategories();
         displayRecyclerView();
-
-
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -68,7 +53,7 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
         getSupportActionBar().setTitle(R.string.categoria);
     }
 
-    private void jsonParse() {
+    private void getCategories() {
         requestQueue = Volley.newRequestQueue(this);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -82,10 +67,7 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
                         categorieMovie.setCategories(categorie.getString("name").toString());
                         categorieMovie.setId(categorie.getString("id").toString());
 
-
-
                         listCategories.add(categorieMovie);
-
 
                     }
                 } catch (JSONException e) {
@@ -107,6 +89,7 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
                 error.printStackTrace();
             }
         });
+
         requestQueue.add(request);
 
 

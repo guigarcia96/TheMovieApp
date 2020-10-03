@@ -1,6 +1,5 @@
 package com.example.themovie.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,7 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.themovie.R;
-import com.example.themovie.model.Api_Info;
+import com.example.themovie.model.ApiInfo;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -33,8 +32,6 @@ public class DetailsMovieActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private String id;
     private ProgressBar progressBar;
-    private Api_Info api_info = new Api_Info();
-
 
 
     @Override
@@ -45,27 +42,23 @@ public class DetailsMovieActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id_movie");
 
-        txt_details_title = findViewById(R.id.txt_details);
-        txt_details_description = findViewById(R.id.txt_details_description);
-        txt_details_average = findViewById(R.id.txt_details_average);
-        imgDetails = findViewById(R.id.img_details);
-        progressBar = findViewById(R.id.progressbar_details);
-
+        setViews();
 
         progressBar.setVisibility(View.VISIBLE);
 
         //seta para voltar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        getMovieDetails(id);
 
+    }
 
-
-
-
-        jsonParse(id);
-
-
-
+    private void setViews() {
+        txt_details_title = findViewById(R.id.txt_details);
+        txt_details_description = findViewById(R.id.txt_details_description);
+        txt_details_average = findViewById(R.id.txt_details_average);
+        imgDetails = findViewById(R.id.img_details);
+        progressBar = findViewById(R.id.progressbar_details);
     }
 
     @Override
@@ -84,13 +77,10 @@ public class DetailsMovieActivity extends AppCompatActivity {
     }
 
 
-    private void jsonParse(String id) {
+    private void getMovieDetails(String id) {
         requestQueue = Volley.newRequestQueue(this);
 
-
-        final String URL = api_info.URL_BASE+"/movie/" + id + "?api_key="+api_info.API_KEY+"&language="+api_info.LANGUAGE;
-
-
+        final String URL = ApiInfo.URL_BASE+"/movie/" + id + "?api_key="+ ApiInfo.API_KEY+"&language="+ ApiInfo.LANGUAGE;
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
                 @Override
@@ -110,7 +100,6 @@ public class DetailsMovieActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(response.getString("title"));
     }
-
 
 
     private void displayData(JSONObject response) {
@@ -138,7 +127,6 @@ public class DetailsMovieActivity extends AppCompatActivity {
         }
 
     }
-
 
 
 }

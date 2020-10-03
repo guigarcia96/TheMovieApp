@@ -19,7 +19,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.themovie.R;
 import com.example.themovie.adapters.MoviesAdapter;
-import com.example.themovie.model.Api_Info;
+import com.example.themovie.model.ApiInfo;
 import com.example.themovie.model.Movies;
 
 import org.json.JSONArray;
@@ -39,35 +39,28 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
     private int finalPage;
     private RequestQueue requestQueue;
     private String id;
-    private Api_Info api_info = new Api_Info();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
+
         setActionBarTitle();
 
-
-        recyclerView = findViewById(R.id.rcy_movies);
         listMovies = new ArrayList<>();
+
         progressBar = findViewById(R.id.progressBar_movies);
         progressBar.setVisibility(View.VISIBLE);
+
+        recyclerView = findViewById(R.id.rcy_movies);
         recyclerView.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 
-        jsonParse(id);
+        getMovies(id);
         displayRecyclerView();
         updateRecyclerView();
-
-
-
-
-
-
 
     }
 
@@ -80,14 +73,10 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void jsonParse(String id) {
+    private void getMovies(String id) {
         requestQueue = Volley.newRequestQueue(this);
 
-
-        final String  URL= api_info.URL_BASE+"/discover/movie?api_key="+api_info.API_KEY+"&with_genres="+id+"&language="+api_info.LANGUAGE+"="+initialPage;
-
-
-
+        String  URL= ApiInfo.URL_BASE+"/discover/movie?api_key="+ ApiInfo.API_KEY+"&with_genres="+id+"&language="+ ApiInfo.LANGUAGE+"="+initialPage;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
             @Override
@@ -105,33 +94,19 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
                            movies.setImageURL("https://image.tmdb.org/t/p/w500/"+movie.getString("poster_path"));
                            movies.setId(movie.getString("id"));
 
-
-
-
-
                            listMovies.add(movies);
 
-
-
-
                        }
-
 
                    }
                    catch (JSONException e) {
                        e.printStackTrace();
                    }
 
-
-
                 progressBar.setVisibility(View.GONE);
                 moviesAdapter.notifyDataSetChanged();
 
             }
-
-
-
-
 
         }, new Response.ErrorListener() {
             @Override
@@ -142,11 +117,6 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
 
         requestQueue.add(request);
-
-
-
-
-
 
     }
     private void setActionBarTitle() {
@@ -179,7 +149,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
                     initialPage++;
                     if(initialPage <= finalPage) {
 
-                        jsonParse(id);
+                        getMovies(id);
 
                     }
 
