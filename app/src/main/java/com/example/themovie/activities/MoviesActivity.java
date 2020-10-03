@@ -42,7 +42,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
     private RecyclerView recyclerView;
     private MoviesAdapter moviesAdapter;
     private List<Movie> listMovies;
-    private ProgressBar progressBar;
+    private ProgressBar progressBarPage, progressBarUpdateMovies;
     private int initialPage = 1;
     private int finalPage;
     private RequestQueue requestQueue;
@@ -62,7 +62,9 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
         setViews();
 
-        progressBar.setVisibility(View.VISIBLE);
+        progressBarPage.setVisibility(View.VISIBLE);
+
+        progressBarUpdateMovies.setVisibility(View.GONE);
 
         recyclerView.setVisibility(View.GONE);
 
@@ -78,9 +80,10 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
     }
 
     private void setViews() {
-        progressBar = findViewById(R.id.progressBar_movies);
+        progressBarPage = findViewById(R.id.progressBar_movies);
         recyclerView = findViewById(R.id.rcy_movies);
         errorLayout = findViewById(R.id.error_layout);
+        progressBarUpdateMovies = findViewById(R.id.progressBar_update_movies);
     }
 
     private void displayRecyclerView() {
@@ -106,7 +109,8 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
                 listMovies.addAll(movies.getMovies());
                 Log.d("TAG",URL);
                 finalPage = movies.getFinalPage();
-                progressBar.setVisibility(View.GONE);
+                progressBarPage.setVisibility(View.GONE);
+                progressBarUpdateMovies.setVisibility(View.GONE);
                 moviesAdapter.notifyDataSetChanged();
 
 
@@ -166,6 +170,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
                 if (!recyclerView.canScrollVertically(1)) {
                     initialPage++;
+                    progressBarUpdateMovies.setVisibility(View.VISIBLE);
                     if(initialPage <= finalPage) {
 
                         getMovies(id);
