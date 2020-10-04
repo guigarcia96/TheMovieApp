@@ -1,5 +1,5 @@
 # The Movie App
-> The Movie App, using The Movie Database API, Volley, Picaso, and Json.
+> The Movie App, using The Movie Database API, Volley, Picaso, and GSON.
 
 ## Images
 
@@ -19,6 +19,18 @@ Clone or Download the project and follow these steps:
 
 - Open the Project in Android Studio.
 - Put your API Key from The Movie Database Inside the ApiInfo.java.
+- Run the code.
+
+## API
+- The Movie Database API provide a current list of the available methods on our movie, tv, actor and image API. 
+- In this APP, we only use movie's part.
+
+
+## Librarys
+
+- Volley: Used to make the HTTPs Request in the App.
+- Picaso: Display the image's url into a ImageView.
+- GSON: Convert the JSON into Models created.
 
 ## Thank You!
 
