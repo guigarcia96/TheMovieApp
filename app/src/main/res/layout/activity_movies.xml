@@ -11,6 +11,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+        android:paddingTop="?actionBarSize"
         android:id="@+id/rcy_movies"
         android:layout_width="409dp"
         android:layout_height="729dp"
