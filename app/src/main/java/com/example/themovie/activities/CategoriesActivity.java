@@ -121,6 +121,7 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
 
         Intent intent = new Intent(this, MoviesActivity.class);
         intent.putExtra("id", listCategories.get(position).getId());
+        intent.putExtra("name", listCategories.get(position).getCategories());
         startActivity(intent);
     }
 }

@@ -48,6 +48,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
     private RequestQueue requestQueue;
     private ConstraintLayout errorLayout;
     private int id;
+    private String categorieName;
     private Button errorButton;
 
 
@@ -56,7 +57,11 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
-        setActionBarTitle();
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id", 0);
+        categorieName = intent.getStringExtra("name");
+
+        setActionBarTitle(categorieName);
 
         listMovies = new ArrayList<>();
 
@@ -70,8 +75,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
         errorLayout.setVisibility(View.INVISIBLE);
 
-        Intent intent = getIntent();
-        id = intent.getIntExtra("id", 0);
+
 
         getMovies(id);
         displayRecyclerView();
@@ -107,7 +111,6 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
                 Gson gson = new Gson();
                 Movies movies = gson.fromJson(response, Movies.class);
                 listMovies.addAll(movies.getMovies());
-                Log.d("TAG",URL);
                 finalPage = movies.getFinalPage();
                 progressBarPage.setVisibility(View.GONE);
                 progressBarUpdateMovies.setVisibility(View.GONE);
@@ -142,8 +145,8 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
         });
 
     }
-    private void setActionBarTitle() {
-        getSupportActionBar().setTitle(R.string.filmes);
+    private void setActionBarTitle(String name) {
+        getSupportActionBar().setTitle(name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
