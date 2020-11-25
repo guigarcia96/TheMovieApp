@@ -34,4 +34,4 @@ Clone or Download the project and follow these steps:
 
 ## Thank You!
 
-Guilherme Moraes – [Linkedin](https://www.linkedin.com/in/guilherme-garcia-dos-santos-40b63891/) 
+Guilherme Moraes – [Linkedin](https://www.linkedin.com/in/ggarciamoraes/) 
